@@ -7,31 +7,25 @@ use App\Models\Registro;
 
 class RegistroController extends ApiController
 {
-    public function index()
+    public function deposito(Request $request)
     {
-        $Registro = Registro::select('id', 'balance')
-            ->get();
-
-        return $this->sendResponse($Registro, "Registro obtenidas correctamente");
-        // return $this->sendError("Error Conocido", "Error controlado", 200);
-    }
-
-    public function store(Request $request)
-    {
-        try {
+        $Registro = Registro::find($request->destino);
+        if (strlen($Registro) > 2) {
+            $Registro->id = $request->input('destino');
+            $Registro->balance = $Registro->balance + $request->input('monto');
+            $Registro->save();
+            return $this->sendResponse($Registro, "El deposito se a hecho corectamente ",200);
+        } else {
             $Registro = new Registro();
             $Registro->id = $request->input('id');
             $Registro->balance = $request->input('balance');
             $Registro->save();
-            return $this->sendResponse($Registro, "Registro ingresada correctamente");
-        } catch (\Exception $e) {
-            return $this->sendError("Error Conocido", "Error al crear la Registro", 201);
+            return $this->sendResponse($Registro, "Registro creado corectamente",201);
         }
     }
 
-    public function show($id)
+    public function balance($id)
     {
-
         $Registro = Registro::where('id', $id)
             ->select('id', 'balance')
             ->get();
@@ -42,14 +36,17 @@ class RegistroController extends ApiController
         }
     }
 
-    public function update(Request $request, $id) {
-        $Registro = Registro::find($id);
-        $Registro->balance = -100;
-        $Registro->save();
-        // ->$Registro -> "balance" = -100;
-
-        return $this->sendResponse($Registro, "Registro obtenida correctamente");
+    public function retiro(Request $request)
+    {
+        $reqID = $request->origen;
+        $retiro = $request->monto;
+        $Registro = Registro::find($reqID);
+        if ($Registro->balance > $retiro) {
+            $Registro->balance = $Registro->balance - $retiro;
+            $Registro->save();
+            return $this->sendResponse($Registro, "Retiro realizado corectamente");
+        } else {
+            return $this->sendError("Error Conocido", "Error: el retiro supera el balnce", 404);
+        }
     }
-
-
 }

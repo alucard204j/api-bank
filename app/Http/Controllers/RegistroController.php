@@ -14,13 +14,23 @@ class RegistroController extends ApiController
             $Registro->id = $request->input('destino');
             $Registro->balance = $Registro->balance + $request->input('monto');
             $Registro->save();
-            return $this->sendResponse($Registro, "El deposito se a hecho corectamente ",200);
+            return $this->sendResponse($Registro, "El deposito se a hecho corectamente ", 200);
         } else {
+            return $this->sendError("Error Conocido", "Error. La cuenta solicitada no existe", 404);
+        }
+    }
+
+    public function crear($id)
+    {
+        $Registro = Registro::find($id);
+        if (strlen($Registro) < 2) {
             $Registro = new Registro();
-            $Registro->id = $request->input('id');
-            $Registro->balance = $request->input('balance');
+            $Registro->id = $id;
+            $Registro->balance = 0;
             $Registro->save();
-            return $this->sendResponse($Registro, "Registro creado corectamente",201);
+            return $this->sendResponse($id, "Registro creado corectamente", 201);
+        } else {
+            return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
         }
     }
 
@@ -41,6 +51,20 @@ class RegistroController extends ApiController
         $reqID = $request->origen;
         $retiro = $request->monto;
         $Registro = Registro::find($reqID);
+        if ($Registro->balance > $retiro) {
+            $Registro->balance = $Registro->balance - $retiro;
+            $Registro->save();
+            return $this->sendResponse($Registro, "Retiro realizado corectamente");
+        } else {
+            return $this->sendError("Error Conocido", "Error: el retiro supera el balnce", 404);
+        }
+    }
+
+    public function transfrencia(Request $request)
+    {
+        //$reqID = $request->origen;
+        //$retiro = $request->monto;
+        $Registro = Registro::find($request->origen);
         if ($Registro->balance > $retiro) {
             $Registro->balance = $Registro->balance - $retiro;
             $Registro->save();

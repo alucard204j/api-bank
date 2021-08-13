@@ -19,4 +19,4 @@ Route::post('/deposito', [App\Http\Controllers\RegistroController::class, 'depos
 Route::get('/balance/{id}', [App\Http\Controllers\RegistroController::class, 'balance']);
 Route::post('/retiro', [App\Http\Controllers\RegistroController::class, 'retiro']);
 Route::post('/crear/{id}', [App\Http\Controllers\RegistroController::class, 'crear']);
-Route::post('/transferencia', [App\Http\Controllers\RegistroController::class, 'transferncia']);
+Route::post('/transferencia', [App\Http\Controllers\RegistroController::class, 'transferencia']);

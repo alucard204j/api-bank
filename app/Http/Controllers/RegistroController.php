@@ -60,17 +60,28 @@ class RegistroController extends ApiController
         }
     }
 
-    public function transfrencia(Request $request)
+    public function transferencia(Request $request)
     {
-        //$reqID = $request->origen;
-        //$retiro = $request->monto;
-        $Registro = Registro::find($request->origen);
-        if ($Registro->balance > $retiro) {
-            $Registro->balance = $Registro->balance - $retiro;
-            $Registro->save();
-            return $this->sendResponse($Registro, "Retiro realizado corectamente");
+        $idOrigen = $request->origen;
+        $idDestino = $request->destino;
+        $montoR = $request->monto;
+        $RegistroOtrigrn= Registro::find($idOrigen);
+        $RegistroDestno= Registro::find($idDestino);
+        if (strlen($RegistroOtrigrn) > 2 && strlen($RegistroDestno) > 2 ) { 
+            if ( $montoR < 1000 && $montoR >=  $RegistroOtrigrn->balance ) {
+               $RegistroOtrigrn->balance = $RegistroOtrigrn->balance - $montoR;
+               $RegistroDestno->balance = $RegistroDestno->balance + $montoR;
+               $RegistroOtrigrn->save();
+               $RegistroDestno->save();
+           }else{
+            return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
+           }
         } else {
-            return $this->sendError("Error Conocido", "Error: el retiro supera el balnce", 404);
+            return $this->sendError("Error Conocido", "Error: No se pudo encontrar la cuenta de horigen o destino", 404);
         }
+    }
+
+    public function mail2($algo){
+
     }
 }

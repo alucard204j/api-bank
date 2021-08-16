@@ -65,23 +65,26 @@ class RegistroController extends ApiController
         $idOrigen = $request->origen;
         $idDestino = $request->destino;
         $montoR = $request->monto;
-        $RegistroOtrigrn= Registro::find($idOrigen);
-        $RegistroDestno= Registro::find($idDestino);
-        if (strlen($RegistroOtrigrn) > 2 && strlen($RegistroDestno) > 2 ) { 
-            if ( $montoR < 1000 && $montoR >=  $RegistroOtrigrn->balance ) {
-               $RegistroOtrigrn->balance = $RegistroOtrigrn->balance - $montoR;
-               $RegistroDestno->balance = $RegistroDestno->balance + $montoR;
-               $RegistroOtrigrn->save();
-               $RegistroDestno->save();
-           }else{
-            return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
-           }
+        $RegistroOtrigrn = Registro::find($idOrigen);
+        $RegistroDestno = Registro::find($idDestino);
+        if (strlen($RegistroOtrigrn) > 2 && strlen($RegistroDestno) > 2) {
+            if ($montoR < 1000 && $montoR < $RegistroOtrigrn->balance) {
+
+                $RegistroOtrigrn->balance = $RegistroOtrigrn->balance - $montoR;
+                $RegistroDestno->balance = $RegistroDestno->balance + $montoR;
+                $RegistroOtrigrn->save();
+                $RegistroDestno->save();
+
+                return $this->sendResponse([$RegistroOtrigrn, $RegistroDestno], "Transferencia realizado corectamente");
+            } else {
+                return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
+            }
         } else {
             return $this->sendError("Error Conocido", "Error: No se pudo encontrar la cuenta de horigen o destino", 404);
         }
     }
 
-    public function mail2($algo){
-
+    public function mail2($algo)
+    {
     }
 }

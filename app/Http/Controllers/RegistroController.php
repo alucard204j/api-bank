@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Registro;
 
+use App\Mail\EnvioMail;
+use Illuminate\Support\Facades\Mail;
+
 class RegistroController extends ApiController
 {
     public function deposito(Request $request)
@@ -77,14 +80,23 @@ class RegistroController extends ApiController
 
                 return $this->sendResponse([$RegistroOtrigrn, $RegistroDestno], "Transferencia realizado corectamente");
             } else {
-                return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
+                if ($montoR >= 1000) {
+                    $correo = new EnvioMail;
+                    Mail::to('jonathan.cembranos@anima.edu.uy')->send($correo);
+                    return $this->sendError("Error Conocido", "se envio un mail con su codigo de verificacion", 404);
+                } else {
+                    return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
+                }
             }
         } else {
             return $this->sendError("Error Conocido", "Error: No se pudo encontrar la cuenta de horigen o destino", 404);
         }
     }
 
-    public function mail2($algo)
+    public function mail2()
     {
+        $correo = new EnvioMail;
+        Mail::to('jonathan.cembranos@anima.edu.uy')->send($correo);
+        return $this->sendError("Error Conocido", "se envio un mail con su codigo de verificacion", 404);
     }
 }

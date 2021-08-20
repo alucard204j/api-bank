@@ -15,7 +15,7 @@ class RegistroController extends ApiController
         $Registro = Registro::find($request->destino);
         if (strlen($Registro) > 2) {
             $Registro->id = $request->input('destino');
-            $Registro->balance = $Registro->balance + $request->input('monto');
+            $Registro->balance = $Registro->balance + $request->monto;
             $Registro->save();
             return $this->sendResponse($Registro, "El deposito se a hecho corectamente ", 200);
         } else {
@@ -93,10 +93,25 @@ class RegistroController extends ApiController
         }
     }
 
+    public function deleteAll()
+    {
+        Registro::truncate();
+        return $this->sendResponse("!!!!!!!", "Todos los registros an sido borados", 200);
+    }
+
     public function mail2()
     {
+        $data = 'wefwef';
+        Mail::send('emails.mailCodigo', $data, function ($msj) use ($data) {
+            $msj->subject('Envio de TOKEN');
+            $msj->to('jonathan.cembranos@anima.edu.uy');
+            return $this->sendResponse("!!!!!!!", "Mail enviado", 200);
+        });
+
+        /*
         $correo = new EnvioMail;
         Mail::to('jonathan.cembranos@anima.edu.uy')->send($correo);
         return $this->sendError("Error Conocido", "se envio un mail con su codigo de verificacion", 404);
+        */
     }
 }

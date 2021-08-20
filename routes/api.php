@@ -21,3 +21,4 @@ Route::post('/retiro', [App\Http\Controllers\RegistroController::class, 'retiro'
 Route::post('/crear/{id}', [App\Http\Controllers\RegistroController::class, 'crear']);
 Route::post('/transferencia', [App\Http\Controllers\RegistroController::class, 'transferencia']);
 Route::get('/mail', [App\Http\Controllers\RegistroController::class, 'mail2']);
+Route::get('/delete', [App\Http\Controllers\RegistroController::class, 'deleteAll']);

@@ -26,8 +26,8 @@ class EnvioMail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build($token)
     {
-        return $this->view('emails.mailCodigo');
+        return $this->view('emails.mailCodigo', ['token' => $token]);
     }
 }

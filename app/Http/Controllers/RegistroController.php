@@ -10,6 +10,21 @@ use Illuminate\Support\Facades\Mail;
 
 class RegistroController extends ApiController
 {
+
+    public function eventPost(Request $request){
+        
+        switch ($request->event) {
+            case 'deposito':
+                $this->deposito($request);
+                break;
+            case 'retiro':
+                $this->deposito($request);
+                break;
+            case 2:
+                echo "i es igual a 2";
+                break;
+        }
+    } 
     public function deposito(Request $request)
     {
         $Registro = Registro::find($request->destino);
@@ -26,9 +41,10 @@ class RegistroController extends ApiController
     public function crear($id)
     {
         $Registro = Registro::find($id);
-        if (strlen($Registro) < 2) {
+        if (!$Registro) {
             $Registro = new Registro();
             $Registro->id = $id;
+            $Registro->email = 'pepito.alcachofas@ejemplo.com';
             $Registro->balance = 0;
             $Registro->save();
             return $this->sendResponse($id, "Registro creado corectamente", 201);
@@ -81,9 +97,7 @@ class RegistroController extends ApiController
                 return $this->sendResponse([$RegistroOtrigrn, $RegistroDestno], "Transferencia realizado corectamente");
             } else {
                 if ($montoR >= 1000) {
-                    $correo = new EnvioMail;
-                    Mail::to('jonathan.cembranos@anima.edu.uy')->send($correo);
-                    return $this->sendError("Error Conocido", "se envio un mail con su codigo de verificacion", 404);
+                   $this->token1($request);
                 } else {
                     return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
                 }
@@ -99,19 +113,20 @@ class RegistroController extends ApiController
         return $this->sendResponse("!!!!!!!", "Todos los registros an sido borados", 200);
     }
 
-    public function mail2()
+    public function token1()
     {
-        $data = 'wefwef';
-        Mail::send('emails.mailCodigo', $data, function ($msj) use ($data) {
-            $msj->subject('Envio de TOKEN');
-            $msj->to('jonathan.cembranos@anima.edu.uy');
-            return $this->sendResponse("!!!!!!!", "Mail enviado", 200);
-        });
-
-        /*
-        $correo = new EnvioMail;
-        Mail::to('jonathan.cembranos@anima.edu.uy')->send($correo);
-        return $this->sendError("Error Conocido", "se envio un mail con su codigo de verificacion", 404);
-        */
+       
+            /*
+            $correo = new EnvioMail;
+            Mail::to('jonathan.cembranos@anima.edu.uy')->send($correo);
+            return $this->sendError("Error Conocido", "se envio un mail con su codigo de verificacion", 404);
+            */
+            $data = array();
+            $data['token'] = 123456;
+            Mail::send('emails.mailCodigo', $data, function($msj) use ($data){
+                $msj->subject('Envio de TOKEN');
+                $msj->to('pepito.josefe@ejemplo.com');
+            });
+        
     }
 }

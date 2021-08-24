@@ -16,10 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 // Route::apiResource('/registro', App\Http\Controllers\RegistroController::class);
 Route::post('/post', [App\Http\Controllers\RegistroController::class, 'eventPost']);
+
 Route::post('/deposito', [App\Http\Controllers\RegistroController::class, 'deposito']);
-Route::get('/balance/{id}', [App\Http\Controllers\RegistroController::class, 'balance']);
 Route::post('/retiro', [App\Http\Controllers\RegistroController::class, 'retiro']);
 Route::post('/crear/{id}', [App\Http\Controllers\RegistroController::class, 'crear']);
 Route::post('/transferencia', [App\Http\Controllers\RegistroController::class, 'transferencia']);
-Route::get('/mail', [App\Http\Controllers\RegistroController::class, 'token1']);
-Route::get('/delete', [App\Http\Controllers\RegistroController::class, 'deleteAll']);
+Route::post('/reset', [App\Http\Controllers\RegistroController::class, 'reset']);
+
+//Route::get('/mail', [App\Http\Controllers\RegistroController::class, 'token1']);
+Route::get('/balance/{id}', [App\Http\Controllers\RegistroController::class, 'balance']);

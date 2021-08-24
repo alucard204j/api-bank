@@ -11,20 +11,30 @@ use Illuminate\Support\Facades\Mail;
 class RegistroController extends ApiController
 {
 
-    public function eventPost(Request $request){
-        
-        switch ($request->event) {
-            case 'deposito':
-                $this->deposito($request);
-                break;
-            case 'retiro':
-                $this->deposito($request);
-                break;
-            case 2:
-                echo "i es igual a 2";
-                break;
+    public function eventPost(Request $request)
+    {
+        if ($request->event) {
+            switch ($request->event) {
+                case 'deposito':
+                    return $this->deposito($request);
+                    break;
+                case 'crear':
+                    return $this->crear($request);;
+                    break;
+                case 'retiro':
+                    return $this->retiro($request);
+                    break;
+                case 'transferencia':
+                    return $this->transferencia($request);
+                    break;
+                case 'reset':
+                    return $this->reset($request);
+                    break;
+            }
+        } else {
+            return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
         }
-    } 
+    }
     public function deposito(Request $request)
     {
         $Registro = Registro::find($request->destino);
@@ -67,15 +77,21 @@ class RegistroController extends ApiController
 
     public function retiro(Request $request)
     {
-        $reqID = $request->origen;
         $retiro = $request->monto;
-        $Registro = Registro::find($reqID);
-        if ($Registro->balance > $retiro) {
-            $Registro->balance = $Registro->balance - $retiro;
-            $Registro->save();
-            return $this->sendResponse($Registro, "Retiro realizado corectamente");
-        } else {
-            return $this->sendError("Error Conocido", "Error: el retiro supera el balnce", 404);
+        $Registro = Registro::find($request->origen);
+        switch ($retiro) {
+            case $retiro > $Registro->balance:
+                return $this->sendError("Error mensje", "El retiro supera el monto del usuario", 404);
+                break;
+            case $retiro >= 1000:
+                return $this->token1($Registro);
+                // return $this->sendError("Error mensje", "El retiro supera los 1000$ es necesario un token", 404);
+                break;
+            default;
+                $Registro->balance = $Registro->balance - $retiro;
+                $Registro->save();
+                return $this->sendResponse($Registro, "Retiro realizado corectamente");
+                break;
         }
     }
 
@@ -97,7 +113,7 @@ class RegistroController extends ApiController
                 return $this->sendResponse([$RegistroOtrigrn, $RegistroDestno], "Transferencia realizado corectamente");
             } else {
                 if ($montoR >= 1000) {
-                   $this->token1($request);
+                    $this->token1($request);
                 } else {
                     return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
                 }
@@ -107,26 +123,22 @@ class RegistroController extends ApiController
         }
     }
 
-    public function deleteAll()
+    public function reset()
     {
         Registro::truncate();
         return $this->sendResponse("!!!!!!!", "Todos los registros an sido borados", 200);
     }
 
-    public function token1()
+    public function token1($Registro)
     {
-       
-            /*
-            $correo = new EnvioMail;
-            Mail::to('jonathan.cembranos@anima.edu.uy')->send($correo);
-            return $this->sendError("Error Conocido", "se envio un mail con su codigo de verificacion", 404);
-            */
-            $data = array();
-            $data['token'] = 123456;
-            Mail::send('emails.mailCodigo', $data, function($msj) use ($data){
-                $msj->subject('Envio de TOKEN');
-                $msj->to('pepito.josefe@ejemplo.com');
-            });
-        
+        $data = array();
+        $data['token'] = random_int(1000, 5000);
+        $data['email'] = $Registro->email;
+        $data['idUser'] = $Registro->origen;
+        Mail::send('emails.mailCodigo', $data, function ($msj) use ($data) {
+            $msj->subject('Envio de TOKEN');
+            $msj->to($data['email']);
+        });
+        return $this->sendResponse("Token enviado", "revise su mail", 200);
     }
 }

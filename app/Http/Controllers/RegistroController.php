@@ -7,6 +7,7 @@ use App\Models\Registro;
 
 use App\Mail\EnvioMail;
 use Illuminate\Support\Facades\Mail;
+use Validator;
 
 class RegistroController extends ApiController
 {
@@ -48,19 +49,30 @@ class RegistroController extends ApiController
         }
     }
 
-    public function crear($id)
+    public function crear(Request $request)
     {
-        $Registro = Registro::find($id);
+        $validator = Validator::make($request->all(), [
+            //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
+            'id' => 'required',
+            'mail' => 'required|email'
+
+        ]);
+        if($validator->fails()){
+            return $this->sendError("Error de validación", $validator->errors(), 422);
+        }
+        
+        $Registro = Registro::find($request->id);
         if (!$Registro) {
             $Registro = new Registro();
-            $Registro->id = $id;
-            $Registro->email = 'pepito.alcachofas@ejemplo.com';
+            $Registro->id = $request->imput('id');
+            $Registro->email = $request->imput('mail');
             $Registro->balance = 0;
             $Registro->save();
-            return $this->sendResponse($id, "Registro creado corectamente", 201);
+            return $this->sendResponse($request, "Registro creado corectamente", 201);
         } else {
             return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
         }
+        
     }
 
     public function balance($id)

@@ -19,7 +19,7 @@ Route::post('/post', [App\Http\Controllers\RegistroController::class, 'eventPost
 
 Route::post('/deposito', [App\Http\Controllers\RegistroController::class, 'deposito']);
 Route::post('/retiro', [App\Http\Controllers\RegistroController::class, 'retiro']);
-Route::post('/crear/{id}', [App\Http\Controllers\RegistroController::class, 'crear']);
+Route::post('/crear', [App\Http\Controllers\RegistroController::class, 'crear']);
 Route::post('/transferencia', [App\Http\Controllers\RegistroController::class, 'transferencia']);
 Route::post('/reset', [App\Http\Controllers\RegistroController::class, 'reset']);
 

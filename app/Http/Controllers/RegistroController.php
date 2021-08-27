@@ -68,30 +68,34 @@ class RegistroController extends ApiController
             //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
             'id' => 'required',
             'mail' => 'required|email'
-
         ]);
         if($validator->fails()){
             return $this->sendError("Error de validación", $validator->errors(), 422);
         }
-        
-        $Registro = Registro::find($request->id);
-        if (!$Registro) {
-            $Registro = new Registro();
-            $Registro->id = $request->input('id');
-            $Registro->email = $request->input('mail');
-            $Registro->balance = 0;
-            $Registro->save();
-            return $this->sendResponse($Registro, "Registro creado corectamente", 201);
-        } else {
-            return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
-        }
-        
+        $Registro2 = Registro::where('email',$request->input('mail'))
+            ->select('id', 'balance', 'email')
+            ->get();
+        if ($Registro2 === null) {
+            $Registro = Registro::find($request->id);
+            if (!$Registro) {
+                $Registro = new Registro();
+                $Registro->id = $request->input('id');
+                $Registro->email = $request->input('mail');
+                $Registro->balance = 0;
+                $Registro->save();
+                return $this->sendResponse($Registro, "Registro creado corectamente", 201);
+            } else {
+                return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
+            }
+        }else {
+            return $this->sendError("Error Conocido", "Errorwefisnfijwebfuiwehfbiewbfwefb", 404);
+        } 
     }
 
     public function balance($id)
     {
         $Registro = Registro::where('id', $id)
-            ->select('id', 'balance')
+            ->select('id', 'balance', 'email')
             ->get();
         if (strlen($Registro) > 2) {
             return $this->sendResponse($Registro, "Registro obtenido correctamente");

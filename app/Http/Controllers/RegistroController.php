@@ -14,7 +14,14 @@ class RegistroController extends ApiController
 
     public function eventPost(Request $request)
     {
-        if ($request->event) {
+        $validator = Validator::make($request->all(), [
+            //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
+            'event' => 'required'
+
+        ]);
+        if($validator->fails()){
+            return $this->sendError("Error de validación", $validator->errors(), 422);
+        }
             switch ($request->event) {
                 case 'deposito':
                     return $this->deposito($request);
@@ -32,14 +39,20 @@ class RegistroController extends ApiController
                     return $this->reset($request);
                     break;
             }
-        } else {
-            return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
-        }
     }
     public function deposito(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
+            'destino' => 'required',
+            'monto' => 'required'
+
+        ]);
+        if($validator->fails()){
+            return $this->sendError("Error de validación", $validator->errors(), 422);
+        }
         $Registro = Registro::find($request->destino);
-        if (strlen($Registro) > 2) {
+        if ($Registro) {
             $Registro->id = $request->input('destino');
             $Registro->balance = $Registro->balance + $request->monto;
             $Registro->save();
@@ -64,11 +77,11 @@ class RegistroController extends ApiController
         $Registro = Registro::find($request->id);
         if (!$Registro) {
             $Registro = new Registro();
-            $Registro->id = $request->imput('id');
-            $Registro->email = $request->imput('mail');
+            $Registro->id = $request->input('id');
+            $Registro->email = $request->input('mail');
             $Registro->balance = 0;
             $Registro->save();
-            return $this->sendResponse($request, "Registro creado corectamente", 201);
+            return $this->sendResponse($Registro, "Registro creado corectamente", 201);
         } else {
             return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
         }
@@ -89,6 +102,16 @@ class RegistroController extends ApiController
 
     public function retiro(Request $request)
     {
+
+        $validator = Validator::make($request->all(), [
+            //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
+            'origen' => 'required',
+            'monto' => 'required|email'
+
+        ]);
+        if($validator->fails()){
+            return $this->sendError("Error de validación", $validator->errors(), 422);
+        }
         $retiro = $request->monto;
         $Registro = Registro::find($request->origen);
         switch ($retiro) {

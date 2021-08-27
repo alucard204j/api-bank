@@ -106,7 +106,7 @@ class RegistroController extends ApiController
         $validator = Validator::make($request->all(), [
             //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
             'origen' => 'required',
-            'monto' => 'required|email'
+            'monto' => 'required'
 
         ]);
         if($validator->fails()){

@@ -14,6 +14,7 @@ class RegistroController extends ApiController
 
     public function eventPost(Request $request)
     {
+        //validaciones
         $validator = Validator::make($request->all(), [
             //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
             'event' => 'required'
@@ -22,6 +23,8 @@ class RegistroController extends ApiController
         if($validator->fails()){
             return $this->sendError("Error de validación", $validator->errors(), 422);
         }
+
+        //resto de la logica
             switch ($request->event) {
                 case 'deposito':
                     return $this->deposito($request);
@@ -42,6 +45,7 @@ class RegistroController extends ApiController
     }
     public function deposito(Request $request)
     {
+        //validaciones
         $validator = Validator::make($request->all(), [
             //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
             'destino' => 'required',
@@ -51,6 +55,8 @@ class RegistroController extends ApiController
         if($validator->fails()){
             return $this->sendError("Error de validación", $validator->errors(), 422);
         }
+        
+        //resto de la logica
         $Registro = Registro::find($request->destino);
         if ($Registro) {
             $Registro->id = $request->input('destino');
@@ -64,6 +70,7 @@ class RegistroController extends ApiController
 
     public function crear(Request $request)
     {
+        //validaciones
         $validator = Validator::make($request->all(), [
             //'csvFile' => 'required|mimes:csv,xls,xlsx|max:15360',
             'id' => 'required',
@@ -72,23 +79,28 @@ class RegistroController extends ApiController
         if($validator->fails()){
             return $this->sendError("Error de validación", $validator->errors(), 422);
         }
-        $Registro2 = Registro::where('email',$request->input('mail'))
+        // variables
+        $id = $request->input('id');
+        $mail = $request->input('mail');
+        
+        //resto de la logica
+        $Registro = Registro::find($id);
+        if (!$Registro) {
+            $Registro2 = Registro::where('email',$mail)
             ->select('id', 'balance', 'email')
             ->get();
-        if ($Registro2 === null) {
-            $Registro = Registro::find($request->id);
-            if (!$Registro) {
+            if (strlen($Registro2) < 3) {
                 $Registro = new Registro();
-                $Registro->id = $request->input('id');
-                $Registro->email = $request->input('mail');
+                $Registro->id = $id;
+                $Registro->email = $mail;
                 $Registro->balance = 0;
                 $Registro->save();
                 return $this->sendResponse($Registro, "Registro creado corectamente", 201);
             } else {
-                return $this->sendError("Error Conocido", "Error. La cuenta solicitada ya existe", 404);
+                return $this->sendError("Error Conocido", "Error este mail ya existe", 404);
             }
         }else {
-            return $this->sendError("Error Conocido", "Errorwefisnfijwebfuiwehfbiewbfwefb", 404);
+            return $this->sendError("Error Conocido", "Error. El id de la cuenta ya existe", 404);
         } 
     }
 

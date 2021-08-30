@@ -1,0 +1,169 @@
+{
+	"info": {
+		"_postman_id": "8d2bdafe-ec51-4d31-8e32-7212e17356fb",
+		"name": "bank",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": " ver balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "api-bank.localhost/api/balance/1",
+					"host": [
+						"api-bank",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"balance",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crear",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"mail\": \"usuario1@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "api-bank.localhost/api/crear",
+					"host": [
+						"api-bank",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"crear"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deposito",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"destino\": 1,\r\n    \"monto\": 5000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "api-bank.localhost/api/deposito",
+					"host": [
+						"api-bank",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"deposito"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retiro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"origen\": 1,\r\n    \"monto\": 1000,\r\n    \"token\": 252284\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "api-bank.localhost/api/retiro",
+					"host": [
+						"api-bank",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"retiro"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reset\": \"token\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "api-bank.localhost/api/reset",
+					"host": [
+						"api-bank",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transferencia",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"origen\": 1,\r\n    \"destino\": 2,\r\n    \"monto\": 10 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "api-bank.localhost/api/transferencia",
+					"host": [
+						"api-bank",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"transferencia"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

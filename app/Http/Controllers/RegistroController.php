@@ -142,8 +142,8 @@ class RegistroController extends ApiController
                 return $this->sendError("Error Conocido", "El retiro supera el monto del usuario", 404);
                 break;
             case $retiro >= 1000:
-                $tokenValid = $this->token1($request, $Registro, "retiro");
-               
+                $tokenValid = $this->token1($request, $Registro);
+
                 if ($tokenValid === true) {
                     $Registro->balance = $Registro->balance - $retiro;
                     $Registro->save();
@@ -180,7 +180,18 @@ class RegistroController extends ApiController
                 return $this->sendResponse([$RegistroOtrigrn, $RegistroDestno], "Transferencia realizado corectamente");
             } else {
                 if ($montoR >= 1000) {
-                    $this->token1($request, $RegistroOtrigrn, "transferencia");
+                    $tokenValid = $this->token1($request, $RegistroOtrigrn);
+
+                    if ($tokenValid === true) {
+                        $RegistroOtrigrn->balance = $RegistroOtrigrn->balance - $montoR;
+                        $RegistroDestno->balance = $RegistroDestno->balance + $montoR;
+                        $RegistroOtrigrn->save();
+                        $RegistroDestno->save();
+
+                        return $this->sendResponse([$RegistroOtrigrn, $RegistroDestno], "Transferencia realizado corectamente");
+                    } else {
+                        return $this->sendError("Error Conocido", "Problema con el token", 404);
+                    }
                 } else {
                     return $this->sendError("Error Conocido", [$idOrigen, $idDestino, $montoR], 404);
                 }
@@ -209,7 +220,7 @@ class RegistroController extends ApiController
         }
     }
 
-    public function token1($request, $Registro, $tipo)
+    public function token1($request, $Registro)
     {
         $origen = $request->input('origen');
         $monto = $request->input('monto');
@@ -220,10 +231,10 @@ class RegistroController extends ApiController
             if (strlen($token) > 3) {
                 $token = $token[0];
                 $timestop = $token->timestop;
-                
+
                 $date = Carbon::now();
                 $date = $date->addMinute(5);
-                
+
                 if (Carbon::now() > $timestop) {
                     return false;
                 } else {

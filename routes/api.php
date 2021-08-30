@@ -22,6 +22,9 @@ Route::post('/retiro', [App\Http\Controllers\RegistroController::class, 'retiro'
 Route::post('/crear', [App\Http\Controllers\RegistroController::class, 'crear']);
 Route::post('/transferencia', [App\Http\Controllers\RegistroController::class, 'transferencia']);
 Route::post('/reset', [App\Http\Controllers\RegistroController::class, 'reset']);
+Route::post('/prueba', [App\Http\Controllers\RegistroController::class, 'pruebas']);
 
-//Route::get('/mail', [App\Http\Controllers\RegistroController::class, 'token1']);
+//Route::post('/token', [App\Http\Controllers\RegistroController::class, 'verificarToken']);
+
+Route::get('/mail', [App\Http\Controllers\RegistroController::class, 'token1']);
 Route::get('/balance/{id}', [App\Http\Controllers\RegistroController::class, 'balance']);

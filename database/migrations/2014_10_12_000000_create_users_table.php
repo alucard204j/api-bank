@@ -11,8 +11,26 @@ class CreateUsersTable extends Migration
      *
      * @return void
      */
+
     public function up()
     {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id()->autoIncrement();
+            $table->string('email')->unique();
+            $table->timestamps();
+            $table->integer('balance');
+
+        });
+
+        Schema::create('Token', function (Blueprint $table) {
+            $table->foreignId('idUsuario')->references('id')->on('users');
+            $table->integer('token');
+            $table->dateTime('timestop');
+            //$table->timestamps();
+
+        });
+    
+        /*
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('email')->unique();
@@ -20,6 +38,7 @@ class CreateUsersTable extends Migration
             //$table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });
+        */
     }
 
     /**
